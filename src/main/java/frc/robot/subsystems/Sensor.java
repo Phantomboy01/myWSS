@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.fasterxml.jackson.core.io.NumberInput;
+
 //Java imports
 
 //Vendor imports
@@ -24,17 +26,26 @@ public class Sensor extends SubsystemBase
 
     // Sensors
     private final DigitalInput input10;
+    private AnalogInput sharp;
+    private AnalogInput sharp2;
+    private int i;
 
 
     // Good for debugging
     // Shuffleboard
     private final ShuffleboardTab tab = Shuffleboard.getTab("Sensors");
     private final NetworkTableEntry D_inputDisp = tab.add("inputDisp", 0).getEntry();
+    private final NetworkTableEntry D_sensorDisp = tab.add("IRDisp", 0).getEntry();
+    private final NetworkTableEntry D_sensor2Disp = tab.add("IRDisp2", 0).getEntry();
+    private final NetworkTableEntry D_servoDisp = tab.add("ServoDisp2", 0).getEntry();
+    private NetworkTableEntry D_cntDisp = tab.add("cntDisp", 0).getEntry();
 
     //Subsystem for sensors
     //This is just an example.
     public Sensor() {
         
+        sharp = new AnalogInput(0);
+        sharp2 = new AnalogInput(1);
         input10 = new DigitalInput(10);
 
     }
@@ -69,9 +80,14 @@ public class Sensor extends SubsystemBase
      * @return value between 0 - 100 (valid data range is 10cm - 80cm)
      */
     public double getIRDistance() {
-        return 0;
+        return (Math.pow(sharp.getAverageVoltage(), -1.2045)) * 27.726;
     }
-   
+
+    public double getIRDistance2() {
+        return (Math.pow(sharp2.getAverageVoltage(), -1.2045)) * 27.726;
+    }
+    
+
     /**
      * Code that runs once every robot loop
      */
@@ -81,7 +97,10 @@ public class Sensor extends SubsystemBase
         //Display on shuffleboard
         //These display is good for debugging but may slow system down.
         //Good to remove unnecessary display during competition
+        i++;
         D_inputDisp.setBoolean(getSwitch());
-
+        D_cntDisp.setNumber(i);
+        D_sensorDisp.setDouble(getIRDistance());
+        D_sensor2Disp.setDouble(getIRDistance2());
     }
 }
